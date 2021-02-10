@@ -1,5 +1,29 @@
-<?php /** @noinspection PhpUnhandledExceptionInspection */
-require('brainfuck_interpreter.php');
-require('brainfuck_AOT.php');
-file_put_contents('demo_compiled.bfc',compile(file_get_contents('demo.bf'))->getByteCode());
-run(new CompiledScript(file_get_contents('demo_compiled.bfc')));
+<?php
+
+use brainfuck\CompiledScript;
+use function brainfuck\compile;
+use function brainfuck\read;
+use function brainfuck\run;
+
+require('lexer.php');
+require('AOT.php');
+require('runtime.php');
+
+function testFile(string $name) {
+	$stream = fopen($name, 'rb+');
+	if (!is_resource($stream)) {
+		die('failed to open file');
+	}
+	return $stream;
+}
+
+$raw = getopt('e:')['e'] ?? null;
+$compile = getopt('c:')['c'] ?? null;
+$compiled = getopt('r:')['r'] ?? null;
+if ($raw !== null) {
+	run(compile(read(testFile($raw))));
+} elseif ($compiled !== null) {
+	run(new CompiledScript(stream_get_contents(testFile($compiled))));
+} elseif ($compile !== null) {
+	file_put_contents($compile . '.bfc', compile(read(testFile($compile)))->getByteCode());
+}

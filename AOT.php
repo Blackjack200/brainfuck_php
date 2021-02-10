@@ -1,4 +1,5 @@
 <?php
+namespace brainfuck;
 
 use pocketmine\utils\BinaryStream;
 
@@ -10,16 +11,9 @@ class CompiledScript {
 	private array $end = [];
 	private string $byteCode;
 	
-	/**
-	 * @throws Exception
-	 */
 	public function __construct(string $byteCode) {
 		$this->byteCode = $byteCode;
 		$stream = new BinaryStream($byteCode);
-		if ($stream->getByte() !== 1) {
-			throw new Exception('Unknown Script Version');
-		}
-		
 		$this->code = $stream->get($stream->getUnsignedVarLong());
 		for ($t = 0, $max = $stream->getUnsignedVarLong(); $t < $max; $t++) {
 			$start = $stream->getUnsignedVarLong();
@@ -29,12 +23,8 @@ class CompiledScript {
 		}
 	}
 	
-	/**
-	 * @throws Exception
-	 */
 	public static function compile(string $code, array $goto) : CompiledScript {
 		$stream = new BinaryStream();
-		$stream->putByte(1);
 		$stream->putUnsignedVarLong(strlen($code));
 		$stream->put($code);
 		$stream->putUnsignedVarLong(count($goto));
