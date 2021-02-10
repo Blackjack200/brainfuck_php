@@ -53,17 +53,14 @@ function run(CompiledScript $script) {
 	$head = 0;
 
 	for ($index = 0, $max = strlen($code); $index < $max; $index++) {
+		if (!isset($stack[$head])) {
+			$stack[$head] = 0;
+		}
 		switch ($code[$index]) {
 			case '+':
-				if (!isset($stack[$head])) {
-					$stack[$head] = 0;
-				}
 				$stack[$head]++;
 				break;
 			case '-':
-				if (!isset($stack[$head])) {
-					$stack[$head] = 0;
-				}
 				$stack[$head]--;
 				break;
 			case '>':
