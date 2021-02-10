@@ -1,0 +1,8 @@
+{
+    "name": "sunxiaochuan/php-brainfuck",
+    "description": "brainfuck implemented in php",
+    "type": "project",
+    "require": {
+        "pocketmine/binaryutils": "^0.1.13"
+    }
+}
