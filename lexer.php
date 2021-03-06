@@ -1,14 +1,16 @@
 <?php
+
 namespace brainfuck;
 
 use Iterator;
 
 function compile(Iterator $raw) : CompiledScript {
-	/** @var Node[] $goto */
+	/** @var Node[] */
+	$mem = [];
+	/** @var Node[] */
 	$goto = [];
 	$code = '';
 	$ignore = false;
-	$temp = 0;
 	foreach ($raw as $char) {
 		switch ($char) {
 			case '#':
@@ -26,18 +28,17 @@ function compile(Iterator $raw) : CompiledScript {
 				case '[':
 					$entry = new Node();
 					$entry->start = $realIndex;
-					$goto[] = $entry;
-					$temp = count($goto) - 1;
+					$mem[] = $entry;
 					break;
 				case ']':
-					if ($temp !== count($goto) - 1) {
-						$temp--;
-					}
-					$goto[$temp--]->end = $realIndex;
+					/** @var Node $node */
+					$node = array_pop($mem);
+					$node->end = $realIndex;
+					$goto[] = $node;
 					break;
 			}
 		}
-	}	
+	}
 	return CompiledScript::compile($code, $goto);
 }
 
